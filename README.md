@@ -6,18 +6,25 @@ Complete toolkit for analyzing Logic Pro projects (.logicx) with advanced binary
 
 ```
 logicx-analyzer/
-├── scripts/                                  # Main analysis scripts
+├── scripts/                                  # Production analysis tools
+│   ├── logic_project_analyzer_enhanced.py    # ⭐ Main analyzer (use this!)
 │   ├── binary_format_analyzer.py             # Low-level binary structure analysis
 │   ├── chunk_structure_analyzer.py           # File structure mapping
 │   ├── extract_plugin_data.py                # Plugin/preset extraction
 │   ├── extract_track_names.py                # Standalone track name extractor
 │   ├── hex_dump_analyzer.py                  # Hex dump investigation
-│   ├── logic_project_analyzer_enhanced.py    # ⭐ Main analyzer (use this!)
-│   └── logic_project_analyzer.py             # Original basic analyzer
+│   ├── logic_project_analyzer.py             # Original basic analyzer
+│   └── experimental/                         # Archived research scripts
+│       └── README.md                         # See experimental/README.md
 ├── docs/                                     # Complete documentation
 │   ├── BINARY_FORMAT_FINDINGS.md             # Technical format specification
+│   ├── MULTI_FORMAT_OUTPUT.md                # Output format examples
+│   ├── QUICK_REFERENCE.md                    # Command quick reference
 │   ├── README_BINARY_ANALYSIS.md             # Binary analysis guide
 │   └── RESEARCH_SUMMARY.md                   # Complete research findings
+├── CLAUDE.md                                 # AI assistant context
+├── CONTRIBUTING.md                           # Contribution guidelines
+├── LICENSE.md                                # GPL 2.0 license
 └── README.md                                 # This file
 ```
 

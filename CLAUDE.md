@@ -6,6 +6,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 LogicX Analyzer is a Python-based reverse engineering toolkit for analyzing Logic Pro project files (.logicx). The project has successfully decoded ~60% of Logic Pro's proprietary binary ProjectData format, extracting plugin configurations, Session Players presets, and file structure.
 
+**License**: GPL 2.0 (see [LICENSE.md](LICENSE.md))
+**Status**: Production ready, active research
+**Python**: 3.7+ required, standard library only (no dependencies)
+
 ## Commands
 
 ### Analysis Commands
@@ -82,11 +86,26 @@ Project.logicx/
 
 ### Code Organization
 
-**Main Analyzers**:
+**Production Scripts** (`scripts/`):
+
 - `logic_project_analyzer_enhanced.py` - Primary tool combining metadata + binary analysis
 - `logic_project_analyzer.py` - Original metadata-only analyzer
+- `binary_format_analyzer.py` - Low-level binary structure analysis
+- `chunk_structure_analyzer.py` - File structure mapping
+- `extract_plugin_data.py` - Plugin/preset extraction
+- `extract_track_names.py` - Track name extraction
+- `hex_dump_analyzer.py` - Hex-level investigation
+
+**Experimental Scripts** (`scripts/experimental/`):
+
+- Archived research prototypes (NOT for production use)
+- `decode_logic.py`, `decode_logic_v2.py` - Early string extraction experiments
+- `logic_deep_decode.py`, `logic_deep_decode_v2.py` - Variable-length int parsing
+- `recursive_unarchive.py` - NSKeyedArchiver exploration (incorrect hypothesis)
+- See `scripts/experimental/README.md` for details
 
 **Binary Analysis Classes** (found across multiple scripts):
+
 - `ProjectDataAnalyzer` - Low-level binary structure analysis
 - `PluginDataExtractor` - JSON preset extraction
 - `HexDumpAnalyzer` - Hex-level investigation
@@ -241,8 +260,40 @@ The JSON extractor uses brace counting with string state tracking to handle nest
 
 ## Documentation
 
-- [README.md](README.md) - User-facing documentation
+**Root Documentation**:
+
+- [README.md](README.md) - User-facing documentation and quick start
+- [CONTRIBUTING.md](CONTRIBUTING.md) - Contribution guidelines and research priorities
+- [LICENSE.md](LICENSE.md) - GPL 2.0 license with educational use disclaimer
+- [CLAUDE.md](CLAUDE.md) - This file (AI assistant context)
+
+**Technical Documentation** (`docs/`):
+
 - [docs/README_BINARY_ANALYSIS.md](docs/README_BINARY_ANALYSIS.md) - Complete binary analysis guide
 - [docs/RESEARCH_SUMMARY.md](docs/RESEARCH_SUMMARY.md) - Research findings and discoveries
 - [docs/BINARY_FORMAT_FINDINGS.md](docs/BINARY_FORMAT_FINDINGS.md) - Technical format specification
 - [docs/QUICK_REFERENCE.md](docs/QUICK_REFERENCE.md) - Command quick reference
+- [docs/MULTI_FORMAT_OUTPUT.md](docs/MULTI_FORMAT_OUTPUT.md) - Output format examples
+
+**Experimental Archive**:
+
+- [scripts/experimental/README.md](scripts/experimental/README.md) - Archived research scripts documentation
+
+## Contributing
+
+When making changes to this repository:
+
+1. **Follow existing patterns** - Scripts use consistent structure and naming
+2. **Update documentation** - Modify relevant docs when changing functionality
+3. **Test with multiple projects** - Ensure compatibility across Logic versions
+4. **See CONTRIBUTING.md** - Full guidelines for research contributions
+5. **Track name extraction** is the #1 research priority (currently unsolved)
+
+## Important Notes for AI Assistants
+
+- **Do NOT use experimental scripts** for production analysis - they are archived research only
+- **Output files are gitignored** - Analysis reports should not be committed
+- **GPL 2.0 licensed** - Derivative works must maintain GPL 2.0 license
+- **Educational use only** - Logic Pro format is proprietary to Apple Inc.
+- **No external dependencies** - All scripts use Python standard library only
+- **macOS focused** - Developed and tested on macOS (Sonoma 14.x)
