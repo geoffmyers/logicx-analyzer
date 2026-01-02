@@ -1,3 +1,9 @@
+#!/usr/bin/env python3
+"""
+Experimental script v2 for Logic Pro ProjectData string extraction.
+DEPRECATED: Use logic_project_analyzer_enhanced.py instead.
+"""
+
 import struct
 import re
 import json

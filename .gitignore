@@ -66,6 +66,8 @@ Research/Misc/cigol-main/
 
 # macOS
 .DS_Store
+**/.DS_Store
+*/.DS_Store
 .AppleDouble
 .LSOverride
 ._*
@@ -81,3 +83,16 @@ Desktop.ini
 # Output from test runs
 test_output/
 output/
+
+# Generated analysis output files
+binary_analysis_*.txt
+chunk_structure_*.txt
+hex_analysis_*.txt
+plugin_data_*.txt
+plugin_data_*.json
+logic_projects_*.md
+logic_projects_*.csv
+logic_projects_enhanced_*.md
+logic_projects_enhanced_*.csv
+logic_projects_advanced_*.md
+track_names_report.md

@@ -450,7 +450,11 @@ If you discover new patterns or decode additional chunks:
 3. Update RESEARCH_SUMMARY.md
 4. Submit a pull request
 
-## ⚠️ Disclaimer
+See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed contribution guidelines.
+
+## 📜 License
+
+This project is licensed under the GNU General Public License v2.0 - see the [LICENSE.md](LICENSE.md) file for details.
 
 **Educational/Research Use Only**
 

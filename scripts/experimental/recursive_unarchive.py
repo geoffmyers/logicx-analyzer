@@ -1,3 +1,10 @@
+#!/usr/bin/env python3
+"""
+Experimental script exploring NSKeyedArchiver unarchiving.
+Note: ProjectData is NOT an NSKeyedArchive format.
+DEPRECATED: Use logic_project_analyzer_enhanced.py instead.
+"""
+
 import gzip
 import plistlib
 

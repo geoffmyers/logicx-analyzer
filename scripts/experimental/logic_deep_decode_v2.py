@@ -1,3 +1,9 @@
+#!/usr/bin/env python3
+"""
+Experimental deep decode script v2 exploring variable-length integer parsing.
+DEPRECATED: Use logic_project_analyzer_enhanced.py instead.
+"""
+
 import struct
 import json
 import re
