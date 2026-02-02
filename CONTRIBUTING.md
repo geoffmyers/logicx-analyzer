@@ -191,6 +191,8 @@ def extract_chunk_data(data: bytes, offset: int, marker: bytes) -> Optional[Dict
 
 ### Research Priorities (Help Wanted!)
 
+> **GitHub Issue:** [#214 — LogicX Analyzer: research priorities](https://github.com/geoffmyers/geoff-myers-mono-repo/issues/214)
+
 1. **Track Name Location** 🔥 **HIGH PRIORITY**
    - Custom track names location still unknown
    - Generic names work ("Audio 1") but custom names elusive
