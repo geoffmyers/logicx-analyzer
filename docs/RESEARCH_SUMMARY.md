@@ -1,3 +1,5 @@
+# Logic Pro ProjectData Binary Format — Research Summary
+
 ## Logic Pro ProjectData Binary Format - Research Summary
 
 ### Executive Summary
