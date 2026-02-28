@@ -1,3 +1,11 @@
+---
+title: Logic Pro ProjectData Binary Format — Research Summary
+created: 2026-02-04
+modified: 2026-02-28
+description: "Successfully reverse-engineered significant portions of Logic Pro's proprietary ProjectData binary format through systematic analysis. Extracted plugin configurations, preset data, and identified the..."
+tags: [music]
+---
+
 # Logic Pro ProjectData Binary Format — Research Summary
 
 ## Logic Pro ProjectData Binary Format - Research Summary

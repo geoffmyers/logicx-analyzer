@@ -1,3 +1,11 @@
+---
+title: Contributing to LogicX Analyzer
+created: 2026-02-04
+modified: 2026-02-04
+description: "Thank you for your interest in contributing to the LogicX Analyzer project! This document provides guidelines for contributing to the reverse engineering effort of Logic Pro's binary format."
+tags: [music]
+---
+
 # Contributing to LogicX Analyzer
 
 Thank you for your interest in contributing to the LogicX Analyzer project! This document provides guidelines for contributing to the reverse engineering effort of Logic Pro's binary format.

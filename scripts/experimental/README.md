@@ -1,3 +1,11 @@
+---
+title: Experimental Scripts
+created: 2026-02-04
+modified: 2026-02-04
+description: "This directory contains early research prototypes and experimental scripts that explored different approaches to decoding Logic Pro's binary ProjectData format. These scripts are preserved for..."
+tags: [music, readme]
+---
+
 # Experimental Scripts
 
 This directory contains early research prototypes and experimental scripts that explored different approaches to decoding Logic Pro's binary ProjectData format. These scripts are preserved for historical reference and educational purposes but have been **superseded by the main production analyzers**.

@@ -1,3 +1,11 @@
+---
+title: LogicX Analyzer
+created: 2026-02-04
+modified: 2026-02-04
+description: Complete toolkit for analyzing Logic Pro projects (.logicx) with advanced binary format reverse engineering.
+tags: [music, readme]
+---
+
 # LogicX Analyzer
 
 Complete toolkit for analyzing Logic Pro projects (.logicx) with advanced binary format reverse engineering.
