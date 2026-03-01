@@ -303,3 +303,4 @@ When making changes to this repository:
 - **Educational use only** - Logic Pro format is proprietary to Apple Inc.
 - **No external dependencies** - All scripts use Python standard library only
 - **macOS focused** - Developed and tested on macOS (Sonoma 14.x)
+- This is a git subtree; push changes upstream with `git subtree push --prefix=music/logicx-analyzer logicx-analyzer main`
