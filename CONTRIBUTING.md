@@ -199,7 +199,8 @@ def extract_chunk_data(data: bytes, offset: int, marker: bytes) -> Optional[Dict
 
 ### Research Priorities (Help Wanted!)
 
-> **GitHub Issue:** [#214 — LogicX Analyzer: research priorities](https://github.com/geoffmyers/geoff-myers-mono-repo/issues/214)
+> Open questions are tracked in this repository's own
+> [issue tracker](https://github.com/geoffmyers/logicx-analyzer/issues) — contributions welcome.
 
 1. **Track Name Location** 🔥 **HIGH PRIORITY**
    - Custom track names location still unknown

@@ -1,3 +1,11 @@
+---
+title: LogicX Analyzer
+created: 2026-02-04
+modified: 2026-02-04
+description: Complete toolkit for analyzing Logic Pro projects (.logicx) with advanced binary format reverse engineering.
+tags: [music, readme]
+---
+
 # LogicX Analyzer
 
 Complete toolkit for analyzing Logic Pro projects (.logicx) with advanced binary format reverse engineering.
@@ -490,3 +498,11 @@ For issues or questions:
 **Last Updated:** January 2, 2026
 **Version:** 2.0 (Advanced Binary Analysis)
 **Status:** ✅ Production Ready
+
+## Credits
+
+Logic Pro and Logic Pro X are trademarks of Apple Inc. This project reads
+project files produced by Logic Pro and is not affiliated with or endorsed by
+Apple.
+
+See [ARCHITECTURE.md](ARCHITECTURE.md) for how the project fits together.
