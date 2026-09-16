@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/icon.svg" width="96" height="96" alt="LogicX Analyzer icon">
+</p>
+
 # LogicX Analyzer
 
 <!-- BADGES:START -->
@@ -310,6 +314,9 @@ Logic Pro is a trademark of Apple Inc. This project reads project files produced
 by Logic Pro and is not affiliated with or endorsed by Apple.
 
 Written by Geoff Myers.
+
+- The README icon is the [Font Awesome](https://fontawesome.com/) `magnifying-glass` glyph,
+  used under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
 
 ## Contributing
 
