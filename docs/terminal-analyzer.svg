@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="340" height="233" viewBox="0 0 340 233" role="img" aria-label="Terminal output of ls -1 scripts/*.py | sed &#x27;s|scripts/||&#x27;">
+<rect width="340" height="233" rx="10" fill="#12141c"/>
+<rect width="340" height="32" rx="10" fill="#1b1e28"/>
+<circle cx="20" cy="16" r="6" fill="#ff5f57"/>
+<circle cx="38" cy="16" r="6" fill="#febc2e"/>
+<circle cx="56" cy="16" r="6" fill="#28c840"/>
+<text x="170" y="21" fill="#7f8798" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="11" text-anchor="middle">logicx-analyzer</text>
+<g font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13">
+<text x="18" y="63.0" fill="#5ac8fa" xml:space="preserve">$ ls scripts/</text>
+<text x="18" y="82.0" fill="#d6dae4" xml:space="preserve">binary_format_analyzer.py</text>
+<text x="18" y="101.0" fill="#d6dae4" xml:space="preserve">chunk_structure_analyzer.py</text>
+<text x="18" y="120.0" fill="#d6dae4" xml:space="preserve">extract_plugin_data.py</text>
+<text x="18" y="139.0" fill="#d6dae4" xml:space="preserve">extract_track_names.py</text>
+<text x="18" y="158.0" fill="#d6dae4" xml:space="preserve">hex_dump_analyzer.py</text>
+<text x="18" y="177.0" fill="#d6dae4" xml:space="preserve">logic_project_analyzer.py</text>
+<text x="18" y="196.0" fill="#d6dae4" xml:space="preserve">logic_project_analyzer_enhanced.py</text>
+</g></svg>

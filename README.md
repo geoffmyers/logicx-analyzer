@@ -8,6 +8,23 @@ tags: [music, readme]
 
 # LogicX Analyzer
 
+<!-- BADGES:START -->
+![Python 3.9+](https://img.shields.io/badge/Python-3.9+-3776ab?style=flat-square&logo=python)
+[![Licence GPL--2.0](https://img.shields.io/badge/licence-GPL--2.0-blue?style=flat-square)](LICENSE.md)
+[![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen?style=flat-square)](CONTRIBUTING.md)
+<!-- BADGES:END -->
+
+## Description
+
+
+
+## Screenshot
+
+<p align="center">
+  <img src="docs/terminal-analyzer.svg" width="100%" alt="The analyzer's entry point, run against a Logic Pro project bundle.">
+</p>
+
+<p align="center"><em>The analyzer's entry point, run against a Logic Pro project bundle.</em></p>
 Complete toolkit for analyzing Logic Pro projects (.logicx) with advanced binary format reverse engineering.
 
 ## 📁 Directory Structure
@@ -506,3 +523,9 @@ project files produced by Logic Pro and is not affiliated with or endorsed by
 Apple.
 
 See [ARCHITECTURE.md](ARCHITECTURE.md) for how the project fits together.
+
+## Architecture
+
+See [ARCHITECTURE.md](ARCHITECTURE.md) for how the project fits together — the
+layout, the data flow, and the constraints worth knowing before changing it.
+
