@@ -1,11 +1,3 @@
----
-title: Logic Pro ProjectData Binary Format - Reverse Engineering Findings
-created: 2026-02-04
-modified: 2026-02-04
-description: "This document summarizes findings from reverse engineering the binary format of Logic Pro's ProjectData files located at Alternatives/000/ProjectData within .logicx project bundles."
-tags: [music]
----
-
 # Logic Pro ProjectData Binary Format - Reverse Engineering Findings
 
 ## Overview

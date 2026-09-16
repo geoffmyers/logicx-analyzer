@@ -1,11 +1,3 @@
----
-title: Logic Pro ProjectData Binary Format Analysis
-created: 2026-02-04
-modified: 2026-02-04
-description: "Complete toolkit for reverse engineering Logic Pro's ProjectData binary format"
-tags: [music]
----
-
 # Logic Pro ProjectData Binary Format Analysis
 
 **Complete toolkit for reverse engineering Logic Pro's ProjectData binary format**

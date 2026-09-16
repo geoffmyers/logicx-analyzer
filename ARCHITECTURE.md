@@ -1,8 +1,3 @@
----
-title: Architecture
-description: How the Logic Pro project analyzer reads an undocumented binary format.
----
-
 # Architecture
 
 A set of Python analysis scripts for Logic Pro (`.logicx`) projects. There is no

@@ -1,11 +1,3 @@
----
-title: Logicx Analyzer - Quick Reference Card
-created: 2026-02-04
-modified: 2026-02-04
-description: "``bash cd \"/path/to/logic/projects\" python3 \"logicx-analyzer/Scripts/logic_project_analyzer_enhanced.py\" ``"
-tags: [music]
----
-
 # Logicx Analyzer - Quick Reference Card
 
 ## 🚀 Most Common Commands

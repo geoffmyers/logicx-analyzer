@@ -1,11 +1,3 @@
----
-title: Multi-Format Output Guide
-created: 2026-02-04
-modified: 2026-02-04
-description: "The Logic Project Analyzer Enhanced now generates reports in four different formats simultaneously: 1. Markdown (.md) - Human-readable detailed report 2. JSON (.json) - Machine-readable complete data..."
-tags: [music]
----
-
 # Multi-Format Output Guide
 
 ## Overview

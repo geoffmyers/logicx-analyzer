@@ -1,11 +1,3 @@
----
-title: CLAUDE.md - LogicX Analyzer
-created: 2026-02-04
-modified: 2026-02-06
-description: "LogicX Analyzer is a Python-based reverse engineering toolkit for analyzing Logic Pro project files (.logicx). The project has successfully decoded ~60% of Logic Pro's proprietary binary ProjectData..."
-tags: [music, claude]
----
-
 # CLAUDE.md - LogicX Analyzer
 
 ## Project Overview
