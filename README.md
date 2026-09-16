@@ -6,20 +6,6 @@
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen?style=flat-square)](CONTRIBUTING.md)
 <!-- BADGES:END -->
 
-## Description
-
-A set of Python scripts for looking inside Logic Pro projects. Point the main
-analyzer at a folder of `.logicx` bundles and it writes a report on every
-project: tempo, key and time signature, the plugins and Session Players presets
-it uses, its tracks and regions, and how its binary data is laid out.
-
-Logic's `ProjectData` file is an undocumented binary format. Most of this
-project is the work of decoding it, and the lower-level tools here are for
-continuing that research. About 60% of the format is understood so far; custom
-track names are the main open problem.
-
-The scripts use only the Python standard library.
-
 ## Table of Contents
 
 - [Description](#description)
@@ -44,6 +30,20 @@ The scripts use only the Python standard library.
 - [Contributing](#contributing)
 - [License](#license)
   - [Disclaimer](#disclaimer)
+
+## Description
+
+A set of Python scripts for looking inside Logic Pro projects. Point the main
+analyzer at a folder of `.logicx` bundles and it writes a report on every
+project: tempo, key and time signature, the plugins and Session Players presets
+it uses, its tracks and regions, and how its binary data is laid out.
+
+Logic's `ProjectData` file is an undocumented binary format. Most of this
+project is the work of decoding it, and the lower-level tools here are for
+continuing that research. About 60% of the format is understood so far; custom
+track names are the main open problem.
+
+The scripts use only the Python standard library.
 
 ## Screenshots
 
