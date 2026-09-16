@@ -15,6 +15,36 @@ Thank you for your interest in contributing to the LogicX Analyzer project! This
 - **High priority**: Track name extraction (custom names location unknown)
 - See [docs/RESEARCH_SUMMARY.md](docs/RESEARCH_SUMMARY.md) for detailed status
 
+## Getting set up
+
+**Stack:** Python 3.7 or newer, standard library only.
+
+```bash
+git clone https://github.com/geoffmyers/logicx-analyzer.git
+cd logicx-analyzer
+```
+
+There is nothing to install; run the scripts with `python3`, as the README shows.
+
+## Checks
+
+<!-- CHECKS:START -->
+Every push and pull request runs these checks in GitHub Actions
+([`.github/workflows/checks.yml`](.github/workflows/checks.yml)), and every release has passed them.
+To run one yourself, use the same commands from the directory shown.
+
+**compile** (Python 3.12, from the repository root):
+
+```bash
+python -m compileall -q .
+```
+
+<!-- CHECKS:END -->
+
+There is no test suite yet, so CI only checks that every script compiles. Test a
+change against real `.logicx` projects too, as described under Testing Guidelines
+below.
+
 ## 🤝 How to Contribute
 
 ### 1. Format Research & Discovery
@@ -230,7 +260,9 @@ def extract_chunk_data(data: bytes, offset: int, marker: bytes) -> Optional[Dict
 - Enabling piracy
 - Violating Logic Pro EULA
 - Redistributing Apple's binaries
-- Commercial use without proper licensing
+
+The code itself is GPL-3.0-or-later, which allows any use, commercial included;
+the limits above are about what the research does with Apple's software.
 
 ### Attribution
 - Logic Pro is © Apple Inc.
@@ -296,6 +328,22 @@ Contributors will be recognized in project documentation. Significant research c
 
 Thank you for helping decode Logic Pro's format! 🎵
 
----
+## Security
 
-**Last Updated**: January 2, 2026
+Please do **not** open a public issue for a security problem. Report it
+privately through GitHub's *Report a vulnerability* button on the Security tab.
+
+## How this repo is published
+
+This project lives in a private mono repo. Each publish adds **one commit** on
+top of the history here, so the history grows with every release, but one
+commit here can stand for many upstream changes. Pull requests are reviewed
+here and applied upstream, then arrive back in the next published commit,
+which credits your authorship in its message. The pull request is closed with
+a link to that commit rather than merged, because the next publish is built
+from the upstream tree and would undo a change made only here.
+
+## Licence
+
+By contributing you agree that your contribution is licensed under the same
+terms as this project — see [LICENSE.md](LICENSE.md).
