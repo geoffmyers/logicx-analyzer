@@ -2,7 +2,7 @@
 
 <!-- BADGES:START -->
 ![Python 3.9+](https://img.shields.io/badge/Python-3.9+-3776ab?style=flat-square&logo=python)
-[![Licence GPL--2.0](https://img.shields.io/badge/licence-GPL--2.0-blue?style=flat-square)](LICENSE.md)
+[![Licence GPL-3.0-or-later](https://img.shields.io/badge/licence-GPL--3.0--or--later-blue?style=flat-square)](LICENSE.md)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen?style=flat-square)](CONTRIBUTING.md)
 <!-- BADGES:END -->
 
@@ -327,7 +327,19 @@ research questions.
 
 ## License
 
-GPL-2.0. See [LICENSE.md](LICENSE.md).
+Copyright © 2026 Geoff Myers
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any later
+version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE. See [LICENSE.md](LICENSE.md) for the full text of the GNU
+General Public License.
+
+SPDX-License-Identifier: `GPL-3.0-or-later`
 
 ### Disclaimer
 

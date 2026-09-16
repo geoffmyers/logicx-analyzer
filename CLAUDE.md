@@ -4,7 +4,7 @@
 
 LogicX Analyzer is a Python-based reverse engineering toolkit for analyzing Logic Pro project files (.logicx). The project has successfully decoded ~60% of Logic Pro's proprietary binary ProjectData format, extracting plugin configurations, Session Players presets, and file structure.
 
-**License**: GPL 2.0 (see [LICENSE.md](LICENSE.md))
+**License**: GPL-3.0-or-later (see [LICENSE.md](LICENSE.md))
 **Status**: Production ready, active research
 **Python**: 3.7+ required, standard library only (no dependencies)
 
@@ -262,7 +262,7 @@ The JSON extractor uses brace counting with string state tracking to handle nest
 
 - [README.md](README.md) - User-facing documentation and quick start
 - [CONTRIBUTING.md](CONTRIBUTING.md) - Contribution guidelines and research priorities
-- [LICENSE.md](LICENSE.md) - GPL 2.0 license with educational use disclaimer
+- [LICENSE.md](LICENSE.md) - GNU GPL v3 text (the project is GPL-3.0-or-later; the README carries the notice and a disclaimer)
 - [CLAUDE.md](CLAUDE.md) - This file (AI assistant context)
 
 **Technical Documentation** (`docs/`):
@@ -291,8 +291,8 @@ When making changes to this repository:
 
 - **Do NOT use experimental scripts** for production analysis - they are archived research only
 - **Output files are gitignored** - Analysis reports should not be committed
-- **GPL 2.0 licensed** - Derivative works must maintain GPL 2.0 license
-- **Educational use only** - Logic Pro format is proprietary to Apple Inc.
+- **GPL-3.0-or-later** - Derivative works must be distributed under GPL-3.0 or a later version
+- **Interoperability research** - the Logic Pro format is proprietary to Apple Inc.; the project studies it so people can read their own projects (no extra use restriction: GPL-3.0-or-later forbids adding one)
 - **No external dependencies** - All scripts use Python standard library only
 - **macOS focused** - Developed and tested on macOS (Sonoma 14.x)
 - This is a git subtree. Push upstream with the mandated wrapper:
