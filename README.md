@@ -10,6 +10,9 @@
 
 
 
+
+Complete toolkit for analyzing Logic Pro projects (.logicx) with advanced binary format reverse engineering.
+
 ## Screenshot
 
 <p align="center">
@@ -17,7 +20,6 @@
 </p>
 
 <p align="center"><em>The analyzer's entry point, run against a Logic Pro project bundle.</em></p>
-Complete toolkit for analyzing Logic Pro projects (.logicx) with advanced binary format reverse engineering.
 
 ## 📁 Directory Structure
 
