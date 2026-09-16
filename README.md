@@ -8,327 +8,148 @@
 
 ## Description
 
+A set of Python scripts for looking inside Logic Pro projects. Point the main
+analyzer at a folder of `.logicx` bundles and it writes a report on every
+project: tempo, key and time signature, the plugins and Session Players presets
+it uses, its tracks and regions, and how its binary data is laid out.
 
+Logic's `ProjectData` file is an undocumented binary format. Most of this
+project is the work of decoding it, and the lower-level tools here are for
+continuing that research. About 60% of the format is understood so far; custom
+track names are the main open problem.
 
+The scripts use only the Python standard library.
 
-Complete toolkit for analyzing Logic Pro projects (.logicx) with advanced binary format reverse engineering.
+## Table of Contents
 
-## Screenshot
+- [Description](#description)
+- [Screenshots](#screenshots)
+- [Features](#features)
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Usage](#usage)
+  - [Analysing a folder of projects](#analysing-a-folder-of-projects)
+  - [Other analyzers](#other-analyzers)
+  - [Binary research tools](#binary-research-tools)
+  - [Example output](#example-output)
+  - [Use cases](#use-cases)
+- [Version History](#version-history)
+- [Architecture](#architecture)
+  - [Inside a .logicx bundle](#inside-a-logicx-bundle)
+  - [The ProjectData format](#the-projectdata-format)
+  - [What has been decoded](#what-has-been-decoded)
+  - [Project layout](#project-layout)
+  - [Documentation](#documentation)
+- [Credits](#credits)
+- [Contributing](#contributing)
+- [License](#license)
+  - [Disclaimer](#disclaimer)
+
+## Screenshots
 
 <p align="center">
   <img src="docs/terminal-analyzer.svg" width="100%" alt="The analyzer's entry point, run against a Logic Pro project bundle.">
 </p>
 
-<p align="center"><em>The analyzer's entry point, run against a Logic Pro project bundle.</em></p>
+<p align="center"><em>The analyzer's entry point, captured from a real run.</em></p>
 
-## 📁 Directory Structure
+## Features
 
-```
-logicx-analyzer/
-├── scripts/                                  # Production analysis tools
-│   ├── logic_project_analyzer_enhanced.py    # ⭐ Main analyzer (use this!)
-│   ├── binary_format_analyzer.py             # Low-level binary structure analysis
-│   ├── chunk_structure_analyzer.py           # File structure mapping
-│   ├── extract_plugin_data.py                # Plugin/preset extraction
-│   ├── extract_track_names.py                # Standalone track name extractor
-│   ├── hex_dump_analyzer.py                  # Hex dump investigation
-│   ├── logic_project_analyzer.py             # Original basic analyzer
-│   └── experimental/                         # Archived research scripts
-│       └── README.md                         # See experimental/README.md
-├── docs/                                     # Complete documentation
-│   ├── BINARY_FORMAT_FINDINGS.md             # Technical format specification
-│   ├── MULTI_FORMAT_OUTPUT.md                # Output format examples
-│   ├── QUICK_REFERENCE.md                    # Command quick reference
-│   ├── README_BINARY_ANALYSIS.md             # Binary analysis guide
-│   └── RESEARCH_SUMMARY.md                   # Complete research findings
-├── CLAUDE.md                                 # AI assistant context
-├── CONTRIBUTING.md                           # Contribution guidelines
-├── LICENSE.md                                # GPL 2.0 license
-└── README.md                                 # This file
-```
+**From `MetaData.plist`**
 
-## 🚀 Quick Start
+- Tempo, key and time signature
+- Track count and sample rate
+- The audio files a project uses
+- The Logic Pro version that saved it
 
-### Analyze All Projects in Current Directory
+**From the binary `ProjectData`**
 
-```bash
-cd "/path/to/your/logic/projects"
-python3 "/path/to/logicx-analyzer/scripts/logic_project_analyzer_enhanced.py"
-```
+- **Plugins used**, such as Alchemy, Sampler and Retro Synth
+- **Session Players presets** with every parameter: preset names ("Sweet
+  Memories", "Night Flight"), character types (Electric Bass, Acoustic Piano,
+  Drummer) and settings such as intensity, dynamics, humanise and variation
+- **Structure**: how many track, MIDI, audio-region and other chunks a project
+  has, as a measure of its complexity
+- **Alchemy library references**: oscillators, LFOs and formants
+- **Track and region names**; generic track names such as "Audio 1" are found,
+  custom ones only partly
+- **Tempo candidates** found in the binary data
 
-### Output
+**Reports** as Markdown, JSON and CSV, covering every project in a folder with
+summary statistics across them.
 
-- Comprehensive markdown report with:
-  - Musical attributes (BPM, key, time signature)
-  - Binary structure analysis
-  - Plugin usage and presets
-  - Session Players configurations
-  - Track and region names
-  - Audio resource counts
-  - Alchemy library references
+## Requirements
 
-## 📊 What Gets Analyzed
+- **Python 3.9** or newer. There are no third-party dependencies.
+- **Logic Pro projects** (`.logicx` bundles) to analyse. The tools were
+  developed on macOS Sonoma 14 with projects saved by Logic Pro 10 and 11.
+- The scripts only read files, so they run on any operating system that can see
+  the bundles. Close a project in Logic before analysing it.
 
-### From MetaData.plist (Standard)
-
-- ✅ Tempo (BPM)
-- ✅ Key signature
-- ✅ Time signature
-- ✅ Track count
-- ✅ Sample rate
-- ✅ Audio file lists
-- ✅ Logic Pro version
-
-### From ProjectData Binary (Advanced) ⭐ NEW
-
-- ✅ **Plugins detected** (Alchemy, Sampler, Retro Synth, etc.)
-- ✅ **Session Players presets** with full parameters
-  - Preset names ("Sweet Memories", "Night Flight", etc.)
-  - Character types (Electric Bass, Acoustic Piano, Drummer)
-  - All parameters (intensity, dynamics, humanize, variation)
-- ✅ **Binary structure**
-  - Chunk counts (Track, MIDI, Audio Region, etc.)
-  - File complexity metrics
-- ✅ **Alchemy synthesizer data**
-  - Library references (oscillators, LFOs, formants)
-  - Synthesis complexity
-- ✅ **Track names** (partial - generic names work)
-- ✅ **Region names**
-- ✅ **Tempo candidates** from binary data
-
-## 🔧 Main Scripts
-
-### 1. logic_project_analyzer_enhanced.py ⭐ RECOMMENDED
-
-**The complete analyzer with all features.**
+## Installation
 
 ```bash
-python3 scripts/logic_project_analyzer_enhanced.py
+git clone https://github.com/geoffmyers/logicx-analyzer.git
 ```
 
-**Features:**
+There is nothing to install. Run the scripts with `python3`.
 
-- Complete metadata extraction
-- Advanced binary format parsing
-- Plugin and preset detection
-- Session Players analysis
-- Binary structure mapping
-- Comprehensive reports
+## Usage
 
-**Output:**
+### Analysing a folder of projects
 
-- `logic_projects_advanced_YYYYMMDD_HHMMSS.md`
-
-**Use Cases:**
-
-- Full project analysis
-- Plugin usage tracking
-- Session Players preset documentation
-- Project complexity assessment
-- Binary format research
-
----
-
-### 2. logic_project_analyzer.py
-
-**Original basic analyzer (metadata only).**
+Run the enhanced analyzer **from the folder that holds your projects**. It reads
+every `.logicx` bundle directly inside that folder.
 
 ```bash
-python3 scripts/logic_project_analyzer.py
+cd ~/Music/Logic
+python3 /path/to/logicx-analyzer/scripts/logic_project_analyzer_enhanced.py
 ```
 
-**Features:**
+It writes four files into the same folder, named with the date and time:
 
-- MetaData.plist parsing
-- Basic statistics
-- Simple reports
+| File | Contents |
+|---|---|
+| `logic_projects_advanced_<timestamp>.md` | The full report: musical attributes, binary structure, plugins and presets, Session Players, tracks and regions, audio resources, Alchemy references |
+| `logic_projects_advanced_<timestamp>.json` | The same data, for other tools |
+| `logic_projects_advanced_<timestamp>.csv` | One row per project |
+| `logic_projects_advanced_<timestamp>_detailed.csv` | A more detailed table |
 
-**Output:**
+Back up your projects before analysing them. The tools never write to a bundle,
+but the format is undocumented.
 
-- `logic_projects_report_YYYYMMDD_HHMMSS.md`
+### Other analyzers
 
-**Use Cases:**
+Both run from the folder that holds your projects, like the enhanced analyzer.
 
-- Quick metadata check
-- When binary analysis isn't needed
-- Baseline compatibility testing
+| Script | What it does | Writes |
+|---|---|---|
+| `scripts/logic_project_analyzer.py` | The original analyzer: `MetaData.plist` only, fast | `logic_projects_report_<timestamp>.md` and `.csv` |
+| `scripts/extract_track_names.py` | Track names from each project's `ProjectData` | `track_names_report.md` |
 
----
+### Binary research tools
 
-### 3. extract_track_names.py
-
-**Standalone track name extractor.**
+These take the path to one project's `ProjectData` file. Without an argument,
+they use the first `ProjectData` they find below the current folder.
 
 ```bash
-python3 scripts/extract_track_names.py
+python3 scripts/binary_format_analyzer.py "My Song.logicx/Alternatives/000/ProjectData"
 ```
 
-**Features:**
+| Script | What it does | Writes |
+|---|---|---|
+| `binary_format_analyzer.py` | Finds chunk markers (`karT`, `gRuA`, `qeSM`, …), extracts strings several ways, and looks for numeric patterns | `binary_analysis_<project>.txt` |
+| `chunk_structure_analyzer.py` | Maps and counts every chunk, and lists track-name candidates | `chunk_structure_<project>.txt` |
+| `extract_plugin_data.py` | Extracts embedded JSON presets, plugin names and audio file paths | `plugin_data_<project>.txt` and `.json` |
+| `hex_dump_analyzer.py` | Annotated hex dumps around each marker type | `hex_analysis_<marker>_<project>.txt` |
 
-- Extracts track names from ProjectData
-- Generates simple report
+All output is written to the current folder. `scripts/experimental/` holds
+earlier research scripts that are kept for reference and not meant for use; see
+its README.
 
-**Output:**
+### Example output
 
-- `track_names_report.md`
-
-**Use Cases:**
-
-- Quick track name check
-- Testing track name extraction
-- Minimal analysis needed
-
-## 🔬 Binary Analysis Tools
-
-Located in `scripts/` - these are advanced tools for format research.
-
-### binary_format_analyzer.py
-
-Deep binary structure analysis.
-
-```bash
-python3 "scripts/binary_format_analyzer.py" "path/to/ProjectData"
-```
-
-**Capabilities:**
-
-- Finds all magic markers (karT, gRuA, qeSM, etc.)
-- Extracts strings with multiple methods
-- Identifies numeric patterns
-- Analyzes data structures
-
-**Output:**
-
-- `binary_analysis_*.txt`
-
----
-
-### chunk_structure_analyzer.py
-
-Complete file structure mapping.
-
-```bash
-python3 "scripts/chunk_structure_analyzer.py" "path/to/ProjectData"
-```
-
-**Capabilities:**
-
-- Maps all chunks in file
-- Counts chunk types
-- Extracts metadata
-- Finds track name candidates
-
-**Output:**
-
-- `chunk_structure_*.txt`
-
----
-
-### extract_plugin_data.py
-
-Plugin and preset extraction.
-
-```bash
-python3 "scripts/extract_plugin_data.py" "path/to/ProjectData"
-```
-
-**Capabilities:**
-
-- Extracts JSON presets
-- Identifies plugins
-- Finds Alchemy references
-- Analyzes audio file paths
-
-**Output:**
-
-- `plugin_data_*.txt`
-- `plugin_data_*.json`
-
----
-
-### hex_dump_analyzer.py
-
-Hex-level investigation.
-
-```bash
-python3 "scripts/hex_dump_analyzer.py" "path/to/ProjectData"
-```
-
-**Capabilities:**
-
-- Creates annotated hex dumps
-- Analyzes marker contexts
-- Multiple string extraction attempts
-- Numeric data interpretation
-
-**Output:**
-
-- `hex_analysis_karT_*.txt` (Track markers)
-- `hex_analysis_gRuA_*.txt` (Audio regions)
-- `hex_analysis_tSnI_*.txt` (Instruments)
-- `hex_analysis_LFUA_*.txt` (Audio files)
-
-## 📚 Documentation
-
-### README_BINARY_ANALYSIS.md
-
-Complete guide to binary format analysis.
-
-**Contents:**
-
-- Binary format overview
-- Tool usage examples
-- Data extraction capabilities
-- Format specification
-- Quick reference
-
----
-
-### RESEARCH_SUMMARY.md
-
-Complete reverse engineering findings.
-
-**Contents:**
-
-- Executive summary
-- Key discoveries
-- Data types decoded
-- Chunk specifications
-- Session Players parameters
-- Next research steps
-
----
-
-### BINARY_FORMAT_FINDINGS.md
-
-Technical format specification.
-
-**Contents:**
-
-- File structure
-- Magic markers
-- Data encoding methods
-- String formats
-- Numeric types
-- Plugin data structures
-
----
-
-### UPGRADE_SUMMARY.md
-
-Recent enhancement details.
-
-**Contents:**
-
-- Version 2.0 changes
-- New features added
-- Test results
-- Before/after comparisons
-- Performance metrics
-
-## 📈 Example Output
-
-### Summary Statistics
+Summary statistics from a real library of 39 projects:
 
 ```
 Total Projects: 39
@@ -340,7 +161,7 @@ Presets Found: 642
 Average Tempo: 99.74 BPM
 ```
 
-### Plugin Usage
+Plugin usage:
 
 ```
 | Plugin              | Projects |
@@ -351,7 +172,7 @@ Average Tempo: 99.74 BPM
 | Alchemy            | 7        |
 ```
 
-### Session Players Characters
+Session Players characters:
 
 ```
 | Character                        | Usage |
@@ -362,7 +183,7 @@ Average Tempo: 99.74 BPM
 | Acoustic Drummer - Neo Soul      | 63    |
 ```
 
-### Per-Project Details
+One project in detail:
 
 ```
 ### Example Project
@@ -386,140 +207,131 @@ Average Tempo: 99.74 BPM
   - intensity: 79, dynamics: 100, riffiness: 3
 ```
 
-## 🎯 Use Cases
+A typical 2–3 MB project takes a second or two to analyse.
 
-### For Musicians/Producers
+### Use cases
 
-- Track plugin usage across projects
-- Identify most-used Session Players presets
-- Analyze musical patterns (key, tempo, time signatures)
-- Document project complexity
-- Archive project metadata
+- **Musicians and producers**: see which plugins and Session Players presets you
+  actually use, find patterns in your keys and tempos, and keep an inventory of
+  your projects.
+- **Researchers and tool builders**: study the `ProjectData` format and build on
+  what has been decoded.
+- **Archiving**: record each project's settings and the audio it depends on.
 
-### For Researchers
+## Version History
 
-- Reverse engineer Logic Pro format
-- Document binary structures
-- Extract embedded configurations
-- Study plugin architectures
-- Develop third-party tools
+**2.0 (December 2025).** Binary format parsing, plugin detection, Session
+Players preset extraction, structure mapping, Alchemy references, tempo from
+binary data, and six new report sections.
 
-### For Project Management
+**1.0 (November 2025).** Metadata extraction, partial track names, audio
+resource counts, musical attributes and CSV export.
 
-- Inventory audio resources
-- Track sample usage
-- Document project settings
-- Generate project reports
-- Analyze workflow patterns
+## Architecture
 
-## ⚙️ Requirements
-
-- **Python:** 3.7 or higher
-- **Dependencies:** None (standard library only)
-- **Platform:** macOS (tested on Sonoma 14.x)
-- **Logic Pro:** 10.x - 11.x
-
-## 🔍 Technical Details
-
-### Binary Format
-
-- Chunk-based structure (similar to IFF/RIFF)
-- Reversed FourCC markers (e.g., `karT` = "Trak" backwards)
-- Mixed endianness (primarily Big-Endian)
-- Multiple string encoding methods
-- JSON-embedded configurations
-
-### File Locations
+### Inside a .logicx bundle
 
 ```
 Project.logicx/
 ├── Alternatives/000/
-│   ├── MetaData.plist          # Metadata (analyzed)
-│   └── ProjectData             # Binary data (analyzed)
+│   ├── MetaData.plist           # tempo, key, time signature (read by every analyzer)
+│   └── ProjectData              # the binary project (read by the binary tools)
 ├── Resources/
-│   └── ProjectInformation.plist # Version info
-└── Media/                       # Audio files
+│   └── ProjectInformation.plist # the Logic version
+└── Media/                       # audio files
 ```
 
-### Performance
+### The ProjectData format
 
-- Typical project (2-3 MB): 1-2 seconds
-- Large project (10+ MB): 5-10 seconds
-- Memory usage: 100-200 MB
+- A **chunk-based** file, similar in spirit to IFF and RIFF, starting with the
+  bytes `23 47 c0 ab`
+- Chunks marked by **reversed four-character codes**: `karT` is "Trak" backwards
+- **Mostly big-endian** numbers, with some exceptions
+- **Four string encodings** side by side: one-, two- and four-byte length
+  prefixes, and null-terminated
+- **Embedded JSON** for Session Players presets
 
-## 📝 Version History
+| Marker | Meaning | Typical count |
+|---|---|---|
+| `karT` | Track | ~320 |
+| `qeSM` | MIDI sequence | ~169 |
+| `qSvE` | Event sequence (automation) | ~169 |
+| `gRuA` | Audio region | ~38 |
+| `tSxT` | Text and notation style | ~32 |
+| `LFUA` / `lFuA` | Audio file reference | ~23 |
+| `PMOC` | Comping and takes | ~23 |
+| `tSnI` | Instrument | ~1 |
 
-### Version 2.0 (December 2025) - Current
+The analysis runs in stages: read `MetaData.plist`, map the chunks in
+`ProjectData`, extract strings for track and region names, parse the embedded
+JSON presets, identify plugins, then write the reports.
 
-- ✅ Advanced binary format parsing
-- ✅ Plugin detection and analysis
-- ✅ Session Players preset extraction
-- ✅ Binary structure mapping
-- ✅ Alchemy library reference extraction
-- ✅ Tempo extraction from binary data
-- ✅ Enhanced reporting with 6 new sections
+### What has been decoded
 
-### Version 1.0 (November 2025)
+| Status | Areas |
+|---|---|
+| **Decoded** | The chunk structure, plugin names, Session Players presets and parameters, 32 notation text styles, Alchemy library references, audio file references, structure metrics, tempo candidates |
+| **Partly decoded** | Track names (generic names only), MIDI sequence structure, automation structure |
+| **Not yet decoded** | Custom track names, MIDI note data, automation curves, third-party plugin state, mixer channel strips, Smart Controls, Flex Time and Flex Pitch |
 
-- ✅ Basic metadata extraction
-- ✅ Track name extraction (partial)
-- ✅ Audio resource counting
-- ✅ Musical attribute analysis
-- ✅ CSV export
+### Project layout
 
-## 🤝 Contributing
+```
+logicx-analyzer/
+├── scripts/
+│   ├── logic_project_analyzer_enhanced.py   # the main analyzer
+│   ├── logic_project_analyzer.py            # metadata-only analyzer
+│   ├── extract_track_names.py
+│   ├── binary_format_analyzer.py
+│   ├── chunk_structure_analyzer.py
+│   ├── extract_plugin_data.py
+│   ├── hex_dump_analyzer.py
+│   └── experimental/                        # archived research scripts
+└── docs/                                    # format research and guides
+```
 
-If you discover new patterns or decode additional chunks:
+### Documentation
 
-1. Document findings in markdown
-2. Add test cases to analyzers
-3. Update RESEARCH_SUMMARY.md
-4. Submit a pull request
+| Document | What it covers |
+|---|---|
+| [docs/README_BINARY_ANALYSIS.md](docs/README_BINARY_ANALYSIS.md) | A guide to the binary analysis tools and what they extract |
+| [docs/RESEARCH_SUMMARY.md](docs/RESEARCH_SUMMARY.md) | The reverse-engineering findings and the next research steps |
+| [docs/BINARY_FORMAT_FINDINGS.md](docs/BINARY_FORMAT_FINDINGS.md) | The format specification: markers, encodings, numeric types, plugin data |
+| [docs/QUICK_REFERENCE.md](docs/QUICK_REFERENCE.md) | Commands at a glance |
+| [docs/MULTI_FORMAT_OUTPUT.md](docs/MULTI_FORMAT_OUTPUT.md) | Examples of the Markdown, JSON and CSV reports |
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed contribution guidelines.
-
-## 📜 License
-
-This project is licensed under the GNU General Public License v2.0 - see the [LICENSE.md](LICENSE.md) file for details.
-
-**Educational/Research Use Only**
-
-This research is for educational purposes and personal project analysis. The Logic Pro file format is proprietary to Apple Inc. This reverse engineering is conducted for interoperability and archival purposes only.
-
-**No Warranty:** Tools provided as-is. Always backup projects before analysis.
-
-**Not Affiliated:** Not affiliated with or endorsed by Apple Inc.
-
-## 📧 Support
-
-For issues or questions:
-
-- Check docs/ folder
-- Refer to docs/RESEARCH_SUMMARY.md for technical details
-
-## 🔗 Quick Links
-
-- **Main Analyzer:** [scripts/logic_project_analyzer_enhanced.py](scripts/logic_project_analyzer_enhanced.py)
-- **Complete Guide:** [docs/README_BINARY_ANALYSIS.md](docs/README_BINARY_ANALYSIS.md)
-- **Research Findings:** [docs/RESEARCH_SUMMARY.md](docs/RESEARCH_SUMMARY.md)
-- **Format Spec:** [docs/BINARY_FORMAT_FINDINGS.md](docs/BINARY_FORMAT_FINDINGS.md)
-
----
-
-**Last Updated:** January 2, 2026
-**Version:** 2.0 (Advanced Binary Analysis)
-**Status:** ✅ Production Ready
+See [ARCHITECTURE.md](ARCHITECTURE.md) for more detail.
 
 ## Credits
 
-Logic Pro and Logic Pro X are trademarks of Apple Inc. This project reads
-project files produced by Logic Pro and is not affiliated with or endorsed by
-Apple.
+Built with the Python standard library alone.
 
-See [ARCHITECTURE.md](ARCHITECTURE.md) for how the project fits together.
+Logic Pro is a trademark of Apple Inc. This project reads project files produced
+by Logic Pro and is not affiliated with or endorsed by Apple.
 
-## Architecture
+Written by Geoff Myers.
 
-See [ARCHITECTURE.md](ARCHITECTURE.md) for how the project fits together — the
-layout, the data flow, and the constraints worth knowing before changing it.
+## Contributing
 
+Research contributions are especially welcome. If you decode a new chunk type or
+data structure:
+
+1. Document what you found in Markdown.
+2. Add test cases to the analyzers.
+3. Update [docs/RESEARCH_SUMMARY.md](docs/RESEARCH_SUMMARY.md).
+4. Open a pull request.
+
+Custom track names are the top research priority. See
+[CONTRIBUTING.md](CONTRIBUTING.md) for the full guidelines and the list of open
+research questions.
+
+## License
+
+GPL-2.0. See [LICENSE.md](LICENSE.md).
+
+### Disclaimer
+
+The Logic Pro project format is proprietary to Apple Inc. This project studies
+it for interoperability and archival purposes, to let people read and document
+their own projects. The tools are provided as-is, without warranty, as the
+licence states; back up your projects before analysing them.
