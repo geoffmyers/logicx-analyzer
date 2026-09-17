@@ -5,13 +5,22 @@ Attempts to parse binary ProjectData files to extract track names and region nam
 """
 
 import re
+import sys
 from pathlib import Path
 from typing import List, Dict, Tuple
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from logic_project_common import (  # noqa: E402
+    extract_strings_from_binary as _extract_strings_from_binary,
+    scan_directory,
+)
 
 
 def extract_strings_from_binary(file_path: Path, min_length: int = 4) -> List[str]:
     """
-    Extract ASCII strings from a binary file.
+    Extract ASCII strings from a binary file. Prints a message on read
+    failure (this script's original behaviour; see
+    `logic_project_common.extract_strings_from_binary`).
 
     Args:
         file_path: Path to binary file
@@ -20,20 +29,7 @@ def extract_strings_from_binary(file_path: Path, min_length: int = 4) -> List[st
     Returns:
         List of extracted strings
     """
-    try:
-        with open(file_path, 'rb') as f:
-            data = f.read()
-
-        # Pattern to match printable ASCII strings
-        pattern = b'[ -~]{' + str(min_length).encode() + b',}'
-        strings_found = re.findall(pattern, data)
-
-        # Decode to UTF-8
-        return [s.decode('utf-8', errors='ignore') for s in strings_found]
-
-    except Exception as e:
-        print(f"Error reading {file_path}: {e}")
-        return []
+    return _extract_strings_from_binary(file_path, min_length, verbose_errors=True)
 
 
 def extract_track_info(project_path: Path) -> Dict:
@@ -124,11 +120,10 @@ def analyze_all_projects(base_dir: Path) -> List[Dict]:
     projects = []
 
     # Find all .logicx projects
-    for project_path in sorted(base_dir.glob("*.logicx")):
-        if project_path.is_dir():
-            print(f"Processing: {project_path.name}...")
-            info = extract_track_info(project_path)
-            projects.append(info)
+    for project_path in scan_directory(base_dir):
+        print(f"Processing: {project_path.name}...")
+        info = extract_track_info(project_path)
+        projects.append(info)
 
     return projects
 

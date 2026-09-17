@@ -39,6 +39,16 @@ To run one yourself, use the same commands from the directory shown.
 python -m compileall -q .
 ```
 
+**tests** (Python 3.12, from the repository root):
+
+```bash
+python -m venv /tmp/venv
+. /tmp/venv/bin/activate
+pip install --quiet --upgrade pip
+pip install --quiet pytest
+python -m pytest -q
+```
+
 <!-- CHECKS:END -->
 
 There is no test suite yet, so CI only checks that every script compiles. Test a

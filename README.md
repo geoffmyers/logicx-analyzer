@@ -52,10 +52,11 @@ The scripts use only the Python standard library.
 ## Screenshots
 
 <p align="center">
-  <img src="docs/terminal-analyzer.svg" width="100%" alt="The analyzer's entry point, run against a Logic Pro project bundle.">
+  <img src="docs/terminal-analyzer.svg" width="100%" alt="The analyzer's entry point, run against a synthetic demo project bundle.">
 </p>
 
-<p align="center"><em>The analyzer's entry point, captured from a real run.</em></p>
+<p align="center"><em>The analyzer's entry point (<code>logic_project_analyzer_enhanced.py</code>), captured from a
+real run against a synthetic demo project — not one of the owner's own.</em></p>
 
 ## Features
 

@@ -7,21 +7,29 @@ Extracts plugins, presets, Session Players configurations, and track information
 Based on reverse engineering research of Logic Pro ProjectData binary format.
 """
 
-import plistlib
 import csv
 import re
 import json
 import struct
+import sys
 from pathlib import Path
 from datetime import datetime
 from collections import Counter, defaultdict
 import statistics
 from typing import Dict, List, Optional, Tuple, Set
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from logic_project_common import (  # noqa: E402
+    extract_metadata_plist,
+    extract_project_info,
+    extract_common_metadata_fields,
+    extract_strings_from_binary,
+    format_key_signature,
+    format_time_signature,
+    scan_directory,
+)
 
 # Constants
-METADATA_PATH = "Alternatives/000/MetaData.plist"
-PROJECT_INFO_PATH = "Resources/ProjectInformation.plist"
 PROJECT_DATA_PATH = "Alternatives/000/ProjectData"
 
 # Known binary markers (reversed FourCC codes)
@@ -40,65 +48,108 @@ CHUNK_MARKERS = {
 }
 
 
-def extract_strings_from_binary(file_path: Path, min_length: int = 4) -> List[str]:
-    """Extract ASCII strings from a binary file."""
-    try:
-        with open(file_path, 'rb') as f:
-            data = f.read()
-        pattern = b'[ -~]{' + str(min_length).encode() + b',}'
-        strings_found = re.findall(pattern, data)
-        return [s.decode('utf-8', errors='ignore') for s in strings_found]
-    except Exception:
-        return []
-
-
 def extract_json_objects(data: bytes) -> List[Dict]:
-    """Extract embedded JSON objects from binary data (Session Players presets)."""
+    """Extract embedded JSON objects from binary data (Session Players presets).
+
+    Every genuine Session Players preset is a complete, self-contained
+    top-level JSON object, so a candidate that never balances back to
+    brace_count 0 within the scan window is not a preset — it's either
+    binary noise that happens to start with `{"`, or a truncated/malformed
+    fragment.
+
+    A single false `{"` start corrupts brace/quote parity for everything
+    after it *when scanning continues from that same starting point* — so
+    on failure this can't simply move on to `i + 1` and keep counting from
+    where the failed scan left off; it must restart counting (fresh
+    `in_string`/`brace_count`) from the next `{"` candidate, exactly as the
+    first attempt did. Retrying every candidate this way is what the
+    original code did (byte-by-byte `i += 1`, implicitly retrying every
+    `{"` it passed), and is also why a file with many false starts (dense
+    binary data, or adversarial input) went quadratic: each retry re-scans
+    up to a 100,000-byte window from scratch, and a dense run of false
+    starts means most of the file gets rescanned once per candidate.
+
+    The fix keeps retrying every candidate — so a real preset shortly after
+    a handful of false starts is still found, matching the original exactly
+    — until the *total bytes spent on failed scans* crosses a budget
+    (`max(2_000_000, len(data) * 4)`, chosen to comfortably cover
+    realistic ProjectData files, which have at most a few scattered false
+    starts, not thousands of adjacent ones). Past that budget the data is
+    dense adversarial/degenerate noise rather than Logic's own presets, and
+    a failure instead skips the rest of the failed window (`i = window_end`)
+    to bound total run time — the one case this deliberately does not
+    chase, trading a small chance of missing something still embedded in
+    that noise for the run finishing at all.
+    """
     json_objects = []
     i = 0
+    limit = len(data) - 10
+    failed_scan_budget = max(2_000_000, len(data) * 4)
 
-    while i < len(data) - 10:
-        if data[i:i+2] == b'{"':
-            # Found potential JSON start
-            brace_count = 0
-            start = i
-            in_string = False
-            escape = False
+    while i < limit:
+        # Jump straight to the next candidate instead of testing every byte.
+        # end=limit+1 keeps the same bound as the original `while i < limit`
+        # (a match's 2 bytes must fit inside data[i:limit+1], i.e. start <= limit-1).
+        i = data.find(b'{"', i, limit + 1)
+        if i == -1:
+            break
 
-            for j in range(i, min(i + 100000, len(data))):
-                byte = data[j]
+        # Found potential JSON start
+        brace_count = 0
+        start = i
+        in_string = False
+        escape = False
+        window_end = min(i + 100000, len(data))
+        matched = False
 
-                if escape:
-                    escape = False
-                    continue
+        for j in range(i, window_end):
+            byte = data[j]
 
-                if byte == ord('\\'):
-                    escape = True
-                    continue
+            if escape:
+                escape = False
+                continue
 
-                if byte == ord('"') and not escape:
-                    in_string = not in_string
+            if byte == ord('\\'):
+                escape = True
+                continue
 
-                if not in_string:
-                    if byte == ord('{'):
-                        brace_count += 1
-                    elif byte == ord('}'):
-                        brace_count -= 1
-                        if brace_count == 0:
-                            # Found complete JSON
-                            json_str = data[start:j+1].decode('utf-8', errors='ignore')
-                            try:
-                                obj = json.loads(json_str)
-                                json_objects.append({
-                                    'offset': start,
-                                    'size': j - start + 1,
-                                    'data': obj
-                                })
-                            except json.JSONDecodeError:
-                                pass
-                            i = j
-                            break
-        i += 1
+            if byte == ord('"') and not escape:
+                in_string = not in_string
+
+            if not in_string:
+                if byte == ord('{'):
+                    brace_count += 1
+                elif byte == ord('}'):
+                    brace_count -= 1
+                    if brace_count == 0:
+                        # Found complete JSON
+                        json_str = data[start:j+1].decode('utf-8', errors='ignore')
+                        try:
+                            obj = json.loads(json_str)
+                            json_objects.append({
+                                'offset': start,
+                                'size': j - start + 1,
+                                'data': obj
+                            })
+                        except json.JSONDecodeError:
+                            pass
+                        i = j
+                        matched = True
+                        break
+
+        if matched:
+            i += 1
+            continue
+
+        # Never balanced within the window. Below budget: retry from the
+        # very next candidate (matches the original algorithm exactly).
+        # Over budget: skip the rest of the failed window instead, so
+        # dense adversarial input still finishes in bounded time.
+        failed_scan_budget -= window_end - i
+        if failed_scan_budget < 0:
+            i = window_end
+        else:
+            i += 1
 
     return json_objects
 
@@ -320,93 +371,9 @@ def extract_track_names(project_path: Path) -> Tuple[List[str], List[str]]:
     return (tracks, regions)
 
 
-def scan_directory(base_path: Path) -> List[Path]:
-    """Scan directory for Logic Pro projects."""
-    logicx_projects = []
-    try:
-        for item in base_path.glob("*.logicx"):
-            if item.is_dir():
-                logicx_projects.append(item)
-    except PermissionError as e:
-        print(f"Warning: Permission denied accessing directory: {e}")
-    return sorted(logicx_projects, key=lambda p: p.name)
-
-
-def extract_metadata_plist(project_path: Path) -> Optional[Dict]:
-    """Extract metadata from MetaData.plist file."""
-    plist_path = project_path / METADATA_PATH
-    try:
-        with open(plist_path, 'rb') as f:
-            return plistlib.load(f)
-    except (FileNotFoundError, plistlib.InvalidFileException, Exception):
-        return None
-
-
-def extract_project_info(project_path: Path) -> Optional[Dict]:
-    """Extract project information from ProjectInformation.plist."""
-    plist_path = project_path / PROJECT_INFO_PATH
-    try:
-        with open(plist_path, 'rb') as f:
-            return plistlib.load(f)
-    except (FileNotFoundError, plistlib.InvalidFileException, Exception):
-        return None
-
-
-def format_key_signature(key: str, mode: str) -> str:
-    """Format key signature combining key and mode."""
-    if key == "Unknown" or mode == "Unknown":
-        return "Unknown"
-    return f"{key} {mode}"
-
-
-def format_time_signature(numerator: int, denominator: int) -> str:
-    """Format time signature."""
-    if numerator == 0 or denominator == 0:
-        return "Unknown"
-    return f"{numerator}/{denominator}"
-
-
 def parse_project_data(metadata: Dict, proj_info: Optional[Dict], project_path: Path) -> Dict:
     """Parse project data from metadata, project info plists, and binary ProjectData."""
-    errors = []
-
-    # Extract musical attributes
-    bpm = metadata.get('BeatsPerMinute', 0)
-    if isinstance(bpm, (int, float)):
-        bpm = round(float(bpm), 2)
-    else:
-        bpm = 0
-        errors.append('Invalid BPM format')
-
-    key = metadata.get('SongKey', 'Unknown')
-    mode = metadata.get('SongGenderKey', 'Unknown')
-    time_sig_num = metadata.get('SongSignatureNumerator', 0)
-    time_sig_denom = metadata.get('SongSignatureDenominator', 0)
-
-    # Extract technical specs
-    tracks = metadata.get('NumberOfTracks', 0)
-    sample_rate = metadata.get('SampleRate', 0)
-    frame_rate_index = metadata.get('FrameRateIndex', 0)
-    version = metadata.get('Version', 0)
-    has_ara = metadata.get('HasARAPlugins', False)
-    has_grid = metadata.get('HasGrid', False)
-    is_timecode = metadata.get('isTimeCodeBased', False)
-
-    # Extract audio file lists
-    audio_files = metadata.get('AudioFiles', [])
-    sampler_instruments = metadata.get('SamplerInstrumentsFiles', [])
-    quicksampler_files = metadata.get('QuicksamplerFiles', [])
-    impulse_responses = metadata.get('ImpulsResponsesFiles', [])
-    alchemy_files = metadata.get('AlchemyFiles', [])
-    ultrabeat_files = metadata.get('UltrabeatFiles', [])
-    playback_files = metadata.get('PlaybackFiles', [])
-    unused_audio = metadata.get('UnusedAudioFiles', [])
-
-    total_samples = (
-        len(audio_files) + len(sampler_instruments) + len(quicksampler_files) +
-        len(impulse_responses) + len(alchemy_files) + len(ultrabeat_files) +
-        len(playback_files)
-    )
+    f = extract_common_metadata_fields(metadata)
 
     # NEW: Extract advanced binary data
     track_names, region_names = extract_track_names(project_path)
@@ -423,33 +390,33 @@ def parse_project_data(metadata: Dict, proj_info: Optional[Dict], project_path: 
         'name': project_path.stem,
         'path': project_path,
         'musical': {
-            'bpm': bpm,
-            'key': key,
-            'mode': mode,
-            'time_signature': format_time_signature(time_sig_num, time_sig_denom),
-            'signature_key': metadata.get('SignatureKey', 0),
+            'bpm': f['bpm'],
+            'key': f['key'],
+            'mode': f['mode'],
+            'time_signature': format_time_signature(f['time_sig_num'], f['time_sig_denom']),
+            'signature_key': f['signature_key'],
             'tempo_candidates': tempo_candidates  # NEW
         },
         'technical': {
-            'tracks': tracks,
-            'sample_rate': sample_rate,
-            'frame_rate_index': frame_rate_index,
-            'version': version,
+            'tracks': f['tracks'],
+            'sample_rate': f['sample_rate'],
+            'frame_rate_index': f['frame_rate_index'],
+            'version': f['version'],
             'logic_version': logic_version,
-            'has_ara_plugins': has_ara,
-            'has_grid': has_grid,
-            'is_timecode_based': is_timecode
+            'has_ara_plugins': f['has_ara_plugins'],
+            'has_grid': f['has_grid'],
+            'is_timecode_based': f['is_timecode_based']
         },
         'audio_counts': {
-            'audio_files': len(audio_files),
-            'sampler_instruments': len(sampler_instruments),
-            'quicksampler_files': len(quicksampler_files),
-            'impulse_responses': len(impulse_responses),
-            'alchemy_files': len(alchemy_files),
-            'ultrabeat_files': len(ultrabeat_files),
-            'playback_files': len(playback_files),
-            'unused_audio_files': len(unused_audio),
-            'total_samples': total_samples
+            'audio_files': len(f['audio_files']),
+            'sampler_instruments': len(f['sampler_instruments']),
+            'quicksampler_files': len(f['quicksampler_files']),
+            'impulse_responses': len(f['impulse_responses']),
+            'alchemy_files': len(f['alchemy_files']),
+            'ultrabeat_files': len(f['ultrabeat_files']),
+            'playback_files': len(f['playback_files']),
+            'unused_audio_files': len(f['unused_audio_files']),
+            'total_samples': f['total_samples']
         },
         'track_info': {
             'track_names': track_names,
@@ -472,12 +439,12 @@ def parse_project_data(metadata: Dict, proj_info: Optional[Dict], project_path: 
             'total_chunks': sum(chunk_counts.values()) if chunk_counts else 0
         },
         'file_lists': {
-            'audio_files': audio_files,
-            'sampler_instruments': sampler_instruments,
-            'quicksampler_files': quicksampler_files,
-            'impulse_responses': impulse_responses
+            'audio_files': f['audio_files'],
+            'sampler_instruments': f['sampler_instruments'],
+            'quicksampler_files': f['quicksampler_files'],
+            'impulse_responses': f['impulse_responses']
         },
-        'errors': errors
+        'errors': f['errors']
     }
 
 

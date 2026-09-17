@@ -27,3 +27,21 @@ jobs:
       - name: compile
         run: |
           python -m compileall -q .
+  tests:
+    name: tests
+    runs-on: ubuntu-latest
+    container: python:3.12-bookworm
+    timeout-minutes: 20
+    defaults:
+      run:
+        shell: bash
+        working-directory: .
+    steps:
+      - uses: actions/checkout@v6
+      - name: tests
+        run: |
+          python -m venv /tmp/venv
+          . /tmp/venv/bin/activate
+          pip install --quiet --upgrade pip
+          pip install --quiet pytest
+          python -m pytest -q

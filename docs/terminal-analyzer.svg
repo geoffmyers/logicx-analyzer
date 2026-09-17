@@ -1,17 +1,50 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="340" height="233" viewBox="0 0 340 233" role="img" aria-label="Terminal output of ls -1 scripts/*.py | sed &#x27;s|scripts/||&#x27;">
-<rect width="340" height="233" rx="10" fill="#12141c"/>
-<rect width="340" height="32" rx="10" fill="#1b1e28"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="628" height="860" viewBox="0 0 628 860" role="img" aria-label="Terminal output of python3 ../scripts/logic_project_analyzer_enhanced.py">
+<rect width="628" height="860" rx="10" fill="#12141c"/>
+<rect width="628" height="32" rx="10" fill="#1b1e28"/>
 <circle cx="20" cy="16" r="6" fill="#ff5f57"/>
 <circle cx="38" cy="16" r="6" fill="#febc2e"/>
 <circle cx="56" cy="16" r="6" fill="#28c840"/>
-<text x="170" y="21" fill="#7f8798" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="11" text-anchor="middle">logicx-analyzer</text>
+<text x="314" y="21" fill="#7f8798" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="11" text-anchor="middle">Projects</text>
 <g font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="13">
-<text x="18" y="63.0" fill="#5ac8fa" xml:space="preserve">$ ls scripts/</text>
-<text x="18" y="82.0" fill="#d6dae4" xml:space="preserve">binary_format_analyzer.py</text>
-<text x="18" y="101.0" fill="#d6dae4" xml:space="preserve">chunk_structure_analyzer.py</text>
-<text x="18" y="120.0" fill="#d6dae4" xml:space="preserve">extract_plugin_data.py</text>
-<text x="18" y="139.0" fill="#d6dae4" xml:space="preserve">extract_track_names.py</text>
-<text x="18" y="158.0" fill="#d6dae4" xml:space="preserve">hex_dump_analyzer.py</text>
-<text x="18" y="177.0" fill="#d6dae4" xml:space="preserve">logic_project_analyzer.py</text>
-<text x="18" y="196.0" fill="#d6dae4" xml:space="preserve">logic_project_analyzer_enhanced.py</text>
+<text x="18" y="63.0" fill="#5ac8fa" xml:space="preserve">$ logic_project_analyzer_enhanced.py</text>
+<text x="18" y="82.0" fill="#d6dae4" xml:space="preserve"></text>
+<text x="18" y="101.0" fill="#d6dae4" xml:space="preserve">======================================================================</text>
+<text x="18" y="120.0" fill="#d6dae4" xml:space="preserve">Advanced Logic Pro Project Analyzer</text>
+<text x="18" y="139.0" fill="#d6dae4" xml:space="preserve">with Binary Format Reverse Engineering</text>
+<text x="18" y="158.0" fill="#d6dae4" xml:space="preserve">======================================================================</text>
+<text x="18" y="177.0" fill="#d6dae4" xml:space="preserve"></text>
+<text x="18" y="196.0" fill="#d6dae4" xml:space="preserve">Scanning directory: ~/Projects</text>
+<text x="18" y="215.0" fill="#d6dae4" xml:space="preserve"></text>
+<text x="18" y="234.0" fill="#d6dae4" xml:space="preserve">Found 1 Logic Pro project(s)</text>
+<text x="18" y="253.0" fill="#d6dae4" xml:space="preserve"></text>
+<text x="18" y="272.0" fill="#d6dae4" xml:space="preserve">Processing projects:</text>
+<text x="18" y="291.0" fill="#d6dae4" xml:space="preserve">[1/1] SyntheticSong.logicx... ✓</text>
+<text x="18" y="310.0" fill="#d6dae4" xml:space="preserve"></text>
+<text x="18" y="329.0" fill="#d6dae4" xml:space="preserve">Successfully processed 1 project(s)</text>
+<text x="18" y="348.0" fill="#d6dae4" xml:space="preserve"></text>
+<text x="18" y="367.0" fill="#d6dae4" xml:space="preserve">Calculating statistics...</text>
+<text x="18" y="386.0" fill="#d6dae4" xml:space="preserve"></text>
+<text x="18" y="405.0" fill="#d6dae4" xml:space="preserve">Generating reports in multiple formats...</text>
+<text x="18" y="424.0" fill="#d6dae4" xml:space="preserve">  - Markdown report...</text>
+<text x="18" y="443.0" fill="#d6dae4" xml:space="preserve">  - JSON report...</text>
+<text x="18" y="462.0" fill="#d6dae4" xml:space="preserve">  - CSV summary report...</text>
+<text x="18" y="481.0" fill="#d6dae4" xml:space="preserve">  - CSV detailed report...</text>
+<text x="18" y="500.0" fill="#d6dae4" xml:space="preserve"></text>
+<text x="18" y="519.0" fill="#d6dae4" xml:space="preserve">======================================================================</text>
+<text x="18" y="538.0" fill="#d6dae4" xml:space="preserve">Analysis Complete!</text>
+<text x="18" y="557.0" fill="#d6dae4" xml:space="preserve">======================================================================</text>
+<text x="18" y="576.0" fill="#d6dae4" xml:space="preserve"></text>
+<text x="18" y="595.0" fill="#d6dae4" xml:space="preserve">Total Projects: 1</text>
+<text x="18" y="614.0" fill="#d6dae4" xml:space="preserve">Total Tracks: 3</text>
+<text x="18" y="633.0" fill="#d6dae4" xml:space="preserve">Track Names Found: 2</text>
+<text x="18" y="652.0" fill="#d6dae4" xml:space="preserve">Audio Regions Found: 1</text>
+<text x="18" y="671.0" fill="#d6dae4" xml:space="preserve">Plugins Detected: 1</text>
+<text x="18" y="690.0" fill="#d6dae4" xml:space="preserve">Presets Found: 1</text>
+<text x="18" y="709.0" fill="#d6dae4" xml:space="preserve">Average Tempo: 120.5 BPM</text>
+<text x="18" y="728.0" fill="#d6dae4" xml:space="preserve"></text>
+<text x="18" y="747.0" fill="#d6dae4" xml:space="preserve">Reports Generated:</text>
+<text x="18" y="766.0" fill="#d6dae4" xml:space="preserve">  📄 Markdown: logic_projects_advanced_20260917_082518.md</text>
+<text x="18" y="785.0" fill="#d6dae4" xml:space="preserve">  📊 JSON:     logic_projects_advanced_20260917_082518.json</text>
+<text x="18" y="804.0" fill="#d6dae4" xml:space="preserve">  📈 CSV:      logic_projects_advanced_20260917_082518.csv</text>
+<text x="18" y="823.0" fill="#d6dae4" xml:space="preserve">  📋 CSV Det:  logic_projects_advanced_20260917_082518_detailed.csv</text>
 </g></svg>

@@ -5,45 +5,30 @@ Analyzes Logic Pro projects (*.logicx) and generates detailed reports
 about their musical attributes, technical specifications, and audio resources.
 """
 
-import plistlib
 import csv
+import sys
 from pathlib import Path
 from datetime import datetime
 from collections import Counter
 import statistics
 from typing import Dict, List, Optional, Tuple
 
-
-# Constants
-METADATA_PATH = "Alternatives/000/MetaData.plist"
-PROJECT_INFO_PATH = "Resources/ProjectInformation.plist"
-
-
-def scan_directory(base_path: Path) -> List[Path]:
-    """
-    Scan directory for Logic Pro projects (*.logicx packages).
-
-    Args:
-        base_path: Directory to scan
-
-    Returns:
-        Sorted list of .logicx project paths
-    """
-    logicx_projects = []
-
-    try:
-        for item in base_path.glob("*.logicx"):
-            if item.is_dir():
-                logicx_projects.append(item)
-    except PermissionError as e:
-        print(f"Warning: Permission denied accessing directory: {e}")
-
-    return sorted(logicx_projects, key=lambda p: p.name)
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from logic_project_common import (  # noqa: E402
+    extract_metadata_plist as _extract_metadata_plist,
+    extract_project_info,
+    extract_common_metadata_fields,
+    format_key_signature,
+    format_time_signature,
+    scan_directory,
+)
 
 
 def extract_metadata_plist(project_path: Path) -> Optional[Dict]:
     """
-    Extract metadata from MetaData.plist file.
+    Extract metadata from MetaData.plist file. Prints a message for read
+    errors other than a missing or malformed plist (this script's original
+    behaviour; see `logic_project_common.extract_metadata_plist`).
 
     Args:
         project_path: Path to .logicx project
@@ -51,39 +36,7 @@ def extract_metadata_plist(project_path: Path) -> Optional[Dict]:
     Returns:
         Dictionary of metadata or None if error
     """
-    plist_path = project_path / METADATA_PATH
-
-    try:
-        with open(plist_path, 'rb') as f:
-            return plistlib.load(f)
-    except FileNotFoundError:
-        return None
-    except plistlib.InvalidFileException:
-        return None
-    except Exception as e:
-        print(f"Error reading {plist_path}: {e}")
-        return None
-
-
-def extract_project_info(project_path: Path) -> Optional[Dict]:
-    """
-    Extract project information from ProjectInformation.plist.
-
-    Args:
-        project_path: Path to .logicx project
-
-    Returns:
-        Dictionary of project info or None if error
-    """
-    plist_path = project_path / PROJECT_INFO_PATH
-
-    try:
-        with open(plist_path, 'rb') as f:
-            return plistlib.load(f)
-    except (FileNotFoundError, plistlib.InvalidFileException):
-        return None
-    except Exception:
-        return None
+    return _extract_metadata_plist(project_path, verbose_errors=True)
 
 
 def extract_filenames(file_paths: List[str]) -> List[str]:
@@ -106,38 +59,6 @@ def extract_filenames(file_paths: List[str]) -> List[str]:
     return filenames
 
 
-def format_key_signature(key: str, mode: str) -> str:
-    """
-    Format key signature combining key and mode.
-
-    Args:
-        key: Musical key (e.g., "F#", "C")
-        mode: Major or minor
-
-    Returns:
-        Formatted key signature (e.g., "F# minor")
-    """
-    if key == "Unknown" or mode == "Unknown":
-        return "Unknown"
-    return f"{key} {mode}"
-
-
-def format_time_signature(numerator: int, denominator: int) -> str:
-    """
-    Format time signature.
-
-    Args:
-        numerator: Top number
-        denominator: Bottom number
-
-    Returns:
-        Formatted time signature (e.g., "4/4")
-    """
-    if numerator == 0 or denominator == 0:
-        return "Unknown"
-    return f"{numerator}/{denominator}"
-
-
 def parse_project_data(metadata: Dict, proj_info: Optional[Dict], project_path: Path) -> Dict:
     """
     Parse project data from metadata and project info plists.
@@ -150,54 +71,7 @@ def parse_project_data(metadata: Dict, proj_info: Optional[Dict], project_path: 
     Returns:
         Structured project data dictionary
     """
-    errors = []
-
-    # Extract musical attributes
-    bpm = metadata.get('BeatsPerMinute', 0)
-    if isinstance(bpm, (int, float)):
-        bpm = round(float(bpm), 2)
-    else:
-        bpm = 0
-        errors.append('Invalid BPM format')
-
-    key = metadata.get('SongKey', 'Unknown')
-    mode = metadata.get('SongGenderKey', 'Unknown')
-
-    time_sig_num = metadata.get('SongSignatureNumerator', 0)
-    time_sig_denom = metadata.get('SongSignatureDenominator', 0)
-
-    # Extract technical specs
-    tracks = metadata.get('NumberOfTracks', 0)
-    sample_rate = metadata.get('SampleRate', 0)
-    frame_rate_index = metadata.get('FrameRateIndex', 0)
-    surround_format = metadata.get('SurroundFormatIndex', 0)
-    surround_mode = metadata.get('SurroundModeIndex', 0)
-    version = metadata.get('Version', 0)
-
-    has_ara = metadata.get('HasARAPlugins', False)
-    has_grid = metadata.get('HasGrid', False)
-    is_timecode = metadata.get('isTimeCodeBased', False)
-
-    # Extract audio file lists
-    audio_files = metadata.get('AudioFiles', [])
-    sampler_instruments = metadata.get('SamplerInstrumentsFiles', [])
-    quicksampler_files = metadata.get('QuicksamplerFiles', [])
-    impulse_responses = metadata.get('ImpulsResponsesFiles', [])
-    alchemy_files = metadata.get('AlchemyFiles', [])
-    ultrabeat_files = metadata.get('UltrabeatFiles', [])
-    playback_files = metadata.get('PlaybackFiles', [])
-    unused_audio = metadata.get('UnusedAudioFiles', [])
-
-    # Calculate total samples
-    total_samples = (
-        len(audio_files) +
-        len(sampler_instruments) +
-        len(quicksampler_files) +
-        len(impulse_responses) +
-        len(alchemy_files) +
-        len(ultrabeat_files) +
-        len(playback_files)
-    )
+    f = extract_common_metadata_fields(metadata)
 
     # Extract project info
     logic_version = "Unknown"
@@ -208,46 +82,46 @@ def parse_project_data(metadata: Dict, proj_info: Optional[Dict], project_path: 
         'name': project_path.stem,
         'path': project_path,
         'musical': {
-            'bpm': bpm,
-            'key': key,
-            'mode': mode,
-            'time_signature': format_time_signature(time_sig_num, time_sig_denom),
-            'signature_key': metadata.get('SignatureKey', 0)
+            'bpm': f['bpm'],
+            'key': f['key'],
+            'mode': f['mode'],
+            'time_signature': format_time_signature(f['time_sig_num'], f['time_sig_denom']),
+            'signature_key': f['signature_key']
         },
         'technical': {
-            'tracks': tracks,
-            'sample_rate': sample_rate,
-            'frame_rate_index': frame_rate_index,
-            'surround_format_index': surround_format,
-            'surround_mode_index': surround_mode,
-            'version': version,
+            'tracks': f['tracks'],
+            'sample_rate': f['sample_rate'],
+            'frame_rate_index': f['frame_rate_index'],
+            'surround_format_index': f['surround_format_index'],
+            'surround_mode_index': f['surround_mode_index'],
+            'version': f['version'],
             'logic_version': logic_version,
-            'has_ara_plugins': has_ara,
-            'has_grid': has_grid,
-            'is_timecode_based': is_timecode
+            'has_ara_plugins': f['has_ara_plugins'],
+            'has_grid': f['has_grid'],
+            'is_timecode_based': f['is_timecode_based']
         },
         'audio_counts': {
-            'audio_files': len(audio_files),
-            'sampler_instruments': len(sampler_instruments),
-            'quicksampler_files': len(quicksampler_files),
-            'impulse_responses': len(impulse_responses),
-            'alchemy_files': len(alchemy_files),
-            'ultrabeat_files': len(ultrabeat_files),
-            'playback_files': len(playback_files),
-            'unused_audio_files': len(unused_audio),
-            'total_samples': total_samples
+            'audio_files': len(f['audio_files']),
+            'sampler_instruments': len(f['sampler_instruments']),
+            'quicksampler_files': len(f['quicksampler_files']),
+            'impulse_responses': len(f['impulse_responses']),
+            'alchemy_files': len(f['alchemy_files']),
+            'ultrabeat_files': len(f['ultrabeat_files']),
+            'playback_files': len(f['playback_files']),
+            'unused_audio_files': len(f['unused_audio_files']),
+            'total_samples': f['total_samples']
         },
         'file_lists': {
-            'audio_files': audio_files,
-            'sampler_instruments': sampler_instruments,
-            'quicksampler_files': quicksampler_files,
-            'impulse_responses': impulse_responses,
-            'alchemy_files': alchemy_files,
-            'ultrabeat_files': ultrabeat_files,
-            'playback_files': playback_files,
-            'unused_audio_files': unused_audio
+            'audio_files': f['audio_files'],
+            'sampler_instruments': f['sampler_instruments'],
+            'quicksampler_files': f['quicksampler_files'],
+            'impulse_responses': f['impulse_responses'],
+            'alchemy_files': f['alchemy_files'],
+            'ultrabeat_files': f['ultrabeat_files'],
+            'playback_files': f['playback_files'],
+            'unused_audio_files': f['unused_audio_files']
         },
-        'errors': errors
+        'errors': f['errors']
     }
 
 
