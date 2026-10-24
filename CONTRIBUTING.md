@@ -150,7 +150,7 @@ Include:
 - `RESEARCH_SUMMARY.md` - Complete findings
 - `BINARY_FORMAT_FINDINGS.md` - Technical specification
 - `README_BINARY_ANALYSIS.md` - Analysis guide
-- `QUICK_REFERENCE.md` - Command reference
+- The command reference and troubleshooting are in the root `README.md`
 
 ## 🧪 Testing Guidelines
 

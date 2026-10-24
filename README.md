@@ -212,7 +212,18 @@ One project in detail:
   - intensity: 79, dynamics: 100, riffiness: 3
 ```
 
-A typical 2–3 MB project takes a second or two to analyse.
+A typical 2–3 MB project takes a second or two to analyse, a 10 MB one five to
+ten seconds, and a folder of 39 projects (about 100 MB) roughly ten seconds in
+about 250 MB of memory.
+
+### Troubleshooting
+
+| Problem | What to do |
+|---|---|
+| "No Logic Pro projects found" | Run the analyzer from the folder that holds the `.logicx` bundles; it does not take a path argument. `ls *.logicx` should list them. |
+| "Permission denied" | Logic probably has the project open. Close it first. |
+| Custom track names are missing | Expected: custom names are the main undecoded part of the format. Generic names ("Audio 1") and Session Players regions are found. |
+| A binary tool picked the wrong project | Pass the full path to that project's `Alternatives/000/ProjectData`. |
 
 ### Use cases
 
@@ -302,7 +313,6 @@ logicx-analyzer/
 | [docs/README_BINARY_ANALYSIS.md](docs/README_BINARY_ANALYSIS.md) | A guide to the binary analysis tools and what they extract |
 | [docs/RESEARCH_SUMMARY.md](docs/RESEARCH_SUMMARY.md) | The reverse-engineering findings and the next research steps |
 | [docs/BINARY_FORMAT_FINDINGS.md](docs/BINARY_FORMAT_FINDINGS.md) | The format specification: markers, encodings, numeric types, plugin data |
-| [docs/QUICK_REFERENCE.md](docs/QUICK_REFERENCE.md) | Commands at a glance |
 | [docs/MULTI_FORMAT_OUTPUT.md](docs/MULTI_FORMAT_OUTPUT.md) | Examples of the Markdown, JSON and CSV reports |
 
 See [ARCHITECTURE.md](ARCHITECTURE.md) for more detail.

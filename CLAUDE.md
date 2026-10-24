@@ -211,11 +211,13 @@ When analyzing binary data, scripts consistently use:
 
 ### Output Formats
 
-All analyzers generate timestamped reports:
-- **Markdown**: `logic_projects_enhanced_YYYYMMDD_HHMMSS.md`
-- **CSV**: `logic_projects_enhanced_YYYYMMDD_HHMMSS.csv`
-- **JSON**: `plugin_data_YYYYMMDD_HHMMSS.json`
-- **Text**: `binary_analysis_YYYYMMDD_HHMMSS.txt`
+Every script writes into the current folder. The folder analyzers stamp their
+reports with the date and time; the per-project binary tools name theirs after
+the project:
+- **Enhanced analyzer**: `logic_projects_advanced_YYYYMMDD_HHMMSS.{md,json,csv}` plus `logic_projects_advanced_YYYYMMDD_HHMMSS_detailed.csv`
+- **Original analyzer**: `logic_projects_report_YYYYMMDD_HHMMSS.{md,csv}`
+- **Track names**: `track_names_report.md`
+- **Binary tools**: `binary_analysis_<project>.txt`, `chunk_structure_<project>.txt`, `plugin_data_<project>.{txt,json}`, `hex_analysis_<marker>_<project>.txt`
 
 ### Performance Characteristics
 
@@ -270,7 +272,6 @@ The JSON extractor uses brace counting with string state tracking to handle nest
 - [docs/README_BINARY_ANALYSIS.md](docs/README_BINARY_ANALYSIS.md) - Complete binary analysis guide
 - [docs/RESEARCH_SUMMARY.md](docs/RESEARCH_SUMMARY.md) - Research findings and discoveries
 - [docs/BINARY_FORMAT_FINDINGS.md](docs/BINARY_FORMAT_FINDINGS.md) - Technical format specification
-- [docs/QUICK_REFERENCE.md](docs/QUICK_REFERENCE.md) - Command quick reference
 - [docs/MULTI_FORMAT_OUTPUT.md](docs/MULTI_FORMAT_OUTPUT.md) - Output format examples
 
 **Experimental Archive**:
